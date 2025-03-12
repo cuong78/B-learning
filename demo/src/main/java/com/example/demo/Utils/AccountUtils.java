@@ -22,6 +22,4 @@ public class AccountUtils implements ApplicationContextAware {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         return userRepo.findByUsername(username).orElseThrow();
     }
-
-
 }

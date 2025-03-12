@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
 import com.example.demo.entity.Account;
+import com.example.demo.entity.RefreshToken;
 import com.example.demo.entity.request.AccountRequest;
 import com.example.demo.entity.request.AuthenticationRequest;
 import com.example.demo.entity.response.AuthenticationResponse;
@@ -29,6 +30,9 @@ public class AuthenticationService implements UserDetailsService {
 
     @Autowired
     TokenService tokenService;
+
+    @Autowired
+    RefreshTokenService refreshTokenService;
 
     public Account register(AccountRequest accountRequest){
         Account account = new Account();
@@ -61,16 +65,20 @@ public class AuthenticationService implements UserDetailsService {
             throw new NullPointerException("Wrong uername or password");
         }
          Account account = authenticationRepository.findByUsername(authenticationRequest.getUsername()).orElseThrow();
-         String token = tokenService.generateToken(account);
 
-         AuthenticationResponse authenticationResponse = new AuthenticationResponse();
-         authenticationResponse.setEmail(account.getEmail());
-         authenticationResponse.setId(account.getId());
-         authenticationResponse.setFullName(account.getFullName());
-         authenticationResponse.setUsername(account.getUsername());
-         authenticationResponse.setRoleEnum(account.getRoleEnum());
-         authenticationResponse.setToken(token);
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(account);
+        String token = tokenService.generateToken(account);
 
-         return authenticationResponse;
+        AuthenticationResponse authenticationResponse = new AuthenticationResponse();
+        authenticationResponse.setEmail(account.getEmail());
+        authenticationResponse.setId(account.getId());
+        authenticationResponse.setFullName(account.getFullName());
+        authenticationResponse.setUsername(account.getUsername());
+        authenticationResponse.setRoleEnum(account.getRoleEnum());
+        authenticationResponse.setToken(token);
+        authenticationResponse.setRefreshToken(refreshToken.getToken()); // Add this line
+
+        return authenticationResponse;
+
     }
 }

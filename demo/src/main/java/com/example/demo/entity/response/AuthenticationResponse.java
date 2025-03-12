@@ -12,6 +12,15 @@ public class AuthenticationResponse {
     @Enumerated(value = EnumType.STRING)
     public RoleEnum roleEnum;
     public String token;
+    public String refreshToken;
+
+    public String getRefreshToken() {
+        return refreshToken;
+    }
+
+    public void setRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
 
     public AuthenticationResponse() {
 

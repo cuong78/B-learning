@@ -1,5 +1,6 @@
 package com.example.demo.entity;
 
+import com.example.demo.enums.OrderStatus;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Getter;
@@ -21,6 +22,8 @@ public class Order {
 
     public Date createAt;
     public float total;
+    public OrderStatus status = OrderStatus.IN_PROGRESS;
+
 
     @ManyToOne
     @JoinColumn(name = "account_id")
