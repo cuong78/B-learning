@@ -43,7 +43,11 @@ public class Filter extends OncePerRequestFilter {
             "/swagger-resources/**",
             "/api/login",
             "/api/register",
-            "/api/refresh-token"
+            "/api/refresh-token",
+            "/api/logout",
+            "/api/reset-password",
+            "/api/forgot-password"
+
     );
 
     //kiểm tra xem request có thuộc danh sách PUBLIC_API
