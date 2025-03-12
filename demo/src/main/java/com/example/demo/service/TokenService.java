@@ -2,7 +2,6 @@ package com.example.demo.service;
 
 
 import com.example.demo.entity.Account;
-import com.example.demo.model.Student;
 import com.example.demo.repository.AuthenticationRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

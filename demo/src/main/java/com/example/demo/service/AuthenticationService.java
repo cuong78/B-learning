@@ -1,12 +1,14 @@
 package com.example.demo.service;
 
 import com.example.demo.entity.Account;
+import com.example.demo.entity.PasswordResetToken;
 import com.example.demo.entity.RefreshToken;
 import com.example.demo.entity.request.AccountRequest;
 import com.example.demo.entity.request.AuthenticationRequest;
 import com.example.demo.entity.response.AuthenticationResponse;
 import com.example.demo.enums.RoleEnum;
 import com.example.demo.repository.AuthenticationRepository;
+import com.example.demo.repository.PasswordResetTokenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -15,6 +17,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Calendar;
+import java.util.Date;
 
 @Service
 public class AuthenticationService implements UserDetailsService {
@@ -33,6 +38,9 @@ public class AuthenticationService implements UserDetailsService {
 
     @Autowired
     RefreshTokenService refreshTokenService;
+
+    @Autowired
+    PasswordResetTokenRepository passwordResetTokenRepository;
 
     public Account register(AccountRequest accountRequest){
         Account account = new Account();
@@ -81,4 +89,42 @@ public class AuthenticationService implements UserDetailsService {
         return authenticationResponse;
 
     }
+
+
+    @Autowired
+    private EmailService emailService;
+ /// //////////////FORGOT-PASSWORD//////////////
+    public void createPasswordResetTokenForAccount(Account account, String token) {
+        PasswordResetToken resetToken = new PasswordResetToken();
+        resetToken.setToken(token);
+        resetToken.setAccount(account);
+        resetToken.setExpiryDate(calculateExpiryDate(60 * 60)); // 1 giờ
+        passwordResetTokenRepository.save(resetToken);
+    }
+
+    private Date calculateExpiryDate(int expiryTimeInSeconds) {
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.SECOND, expiryTimeInSeconds);
+        return new Date(cal.getTime().getTime());
+    }
+ /// //RESET-PASSWORD////////////////////////
+ public Account validatePasswordResetToken(String token) {
+     PasswordResetToken passToken = passwordResetTokenRepository.findByToken(token);
+
+     if (passToken.getExpiryDate().before(new Date())) {
+         throw new IllegalArgumentException("Token expired");
+     }
+     return passToken.getAccount();
+ }
+    public void changePassword(Account account, String newPassword) {
+        account.setPassword(passwordEncoder.encode(newPassword));
+        authenticationRepository.save(account);
+    }
+
+    public void deleteResetToken(String token) {
+        PasswordResetToken resetToken = passwordResetTokenRepository.findByToken(token);
+        passwordResetTokenRepository.delete(resetToken);
+    }
+
+
 }
