@@ -1,5 +1,7 @@
 package com.example.demo.service;
 
+import com.example.demo.Utils.AccountUtils;
+import com.example.demo.entity.Account;
 import com.example.demo.entity.Order;
 import com.example.demo.entity.OrderDetail;
 import com.example.demo.entity.Product;
@@ -26,21 +28,47 @@ public class OrderService {
     @Autowired
     ModelMapper modelMapper;
 
+    @Autowired
+    AccountUtils accountUtils;
+
     public Order create(OrderRequest orderRequest){
+
+        float total =0 ;
+
         List<OrderDetail> orderDetails = new ArrayList<>();
         Order order = modelMapper.map(orderRequest, Order.class);
         order.setOrderDetails(orderDetails);
-
+        order.setAccount(accountUtils.getCurrentAccount());
         for(OrderDetailRequest orderDetailRequest: orderRequest.getDetails()){
             OrderDetail orderDetail = new OrderDetail();
             Product product = productRepository.findProductById(orderDetailRequest.getProductId());
-            orderDetail.setProduct(product);
-            orderDetail.setQuantity(orderDetailRequest.getQuantity());
-            orderDetail.setPrice(product.getPrice());
-            orderDetail.setOrder(order);
-            orderDetails.add(orderDetail);
+
+            if(product.getQuantity()>=orderDetailRequest.getQuantity()){
+
+               orderDetail.setProduct(product);
+               orderDetail.setQuantity(orderDetailRequest.getQuantity());
+               orderDetail.setPrice(product.getPrice() * orderDetailRequest.getQuantity());
+               orderDetail.setOrder(order);
+               orderDetails.add(orderDetail);
+               product.setQuantity(product.getQuantity() - orderDetailRequest.getQuantity());
+               productRepository.save(product);
+               total += orderDetail.getPrice();
+           }else{
+                throw new RuntimeException("quantity is not enough");
+            }
         }
+        order.setTotal(total);
 
         return orderRepository.save(order);
+    }
+
+    public List<Order> getOrderByUser() {
+        Account account = accountUtils.getCurrentAccount();
+        return orderRepository.findAllByAccountId(account.getId());
+
+    }
+
+    public List<Order> getALL() {
+        return orderRepository.findAll();
     }
 }

@@ -2,6 +2,7 @@ package com.example.demo.config;
 
 import com.example.demo.mapper.OrderMapper;
 import com.example.demo.mapper.ProductMapper;
+import com.example.demo.mapper.SpaServiceMapper;
 import com.example.demo.repository.ProductRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ public class ModelMapperConfig {
         ModelMapper modelMapper = new ModelMapper();
         modelMapper.addMappings(new ProductMapper());
         modelMapper.addMappings(new OrderMapper());
+        modelMapper.addMappings(new SpaServiceMapper());
         return modelMapper;
     }
 }

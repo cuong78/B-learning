@@ -6,10 +6,9 @@ import com.example.demo.service.OrderService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/order")
@@ -22,6 +21,18 @@ public class OrderAPI {
     @PostMapping
     public ResponseEntity create(@RequestBody OrderRequest orderRequest){
         Order order = orderService.create(orderRequest);
+        return ResponseEntity.ok(order);
+    }
+
+    @GetMapping("/All")
+    public ResponseEntity getAll(){
+        List<Order> orders = orderService.getALL();
+        return ResponseEntity.ok(orders);
+    }
+
+    @GetMapping("/user")
+    public ResponseEntity getOrderBuUser() {
+        List<Order> order = orderService.getOrderByUser();
         return ResponseEntity.ok(order);
     }
 }

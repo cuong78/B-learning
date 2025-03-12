@@ -1,6 +1,7 @@
 package com.example.demo.exception;
 
 import com.example.demo.exception.exceptions.AuthorizeException;
+import com.example.demo.exception.exceptions.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -40,6 +41,16 @@ public class APIHandleException {
     @ExceptionHandler(AuthorizeException.class)
     public ResponseEntity handleAuthenticateException(AuthorizeException exception){
         return new ResponseEntity(exception.getMessage(),HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity RuntimeExceptionException(RuntimeException exception){
+        return new ResponseEntity(exception.getMessage(),HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity NotFoundException(NotFoundException exception){
+        return new ResponseEntity(exception.getMessage(),HttpStatus.NOT_FOUND);
     }
 
 

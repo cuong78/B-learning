@@ -31,10 +31,6 @@ public class AuthenticationService implements UserDetailsService {
     TokenService tokenService;
 
     public Account register(AccountRequest accountRequest){
-        // xử lý logic
-
-        // lưu xuống database
-
         Account account = new Account();
 
         account.setUsername(accountRequest.getUsername());

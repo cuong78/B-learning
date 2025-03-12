@@ -1,6 +1,7 @@
 package com.example.demo.entity;
 
 import com.example.demo.enums.RoleEnum;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -34,9 +35,13 @@ public class Account implements UserDetails {
     @Enumerated(value = EnumType.STRING)
     public RoleEnum roleEnum;
 
-    @OneToMany(mappedBy = "account")
+    @OneToMany(mappedBy = "account",cascade = CascadeType.ALL)
+    @JsonIgnore
     List<Order> orders = new ArrayList<>();
 
+    @OneToMany(mappedBy = "account",cascade = CascadeType.ALL)
+    @JsonIgnore
+    List<Booking> bookings = new ArrayList<>();
     public Account() {
 
     }
@@ -94,7 +99,7 @@ public class Account implements UserDetails {
 
     @Override
     public String getUsername() {
-        return  this.email;
+        return  this.username;
     }
 
     @Override
